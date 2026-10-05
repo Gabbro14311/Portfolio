@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Welcome to my Portfolio</h1>
+        <nav class="main-nav"> 
+            <ul> 
+                <li><a href="/">Home</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/works">Works</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+        <hr class="header-divider">
+    </header>
+
+    <header class="linkedlist-header">
+        <h1>Linked List</h1>
+        <form action="/works/linkedlist" method="post">
+            <div>
+                <label for="data">Enter data:</label>
+                <input type="text" id="data" name="inputString">
+            </div>
+
+            <div>
+                <label for="operation">Choose an action:</label>
+                <select id="operation" name="action">
+                    <option value="insert_at_beginning">Insert at Beginning</option>
+                    <option value="insert_at_end">Insert at End</option>
+                    <option value="insert_at">Insert at</option>
+                    <option value="remove_at_beginning">Remove at Beginning</option>
+                    <option value="remove_at_end">Remove at End</option>
+                    <option value="remove_at">Remove at</option>
+                    <option value="search">Search</option>
+                </select>
+            </div>
+
+            <input type="submit" value="Execute">
+
+        </form>
+    </header>
+</body>
+</html>

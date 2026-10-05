@@ -1,0 +1,26 @@
+* {box-sizing: border-box} 
+
+.site-header {
+    text-align: center;
+    padding: 50px 20px 20px 20px;
+}
+
+.site-title {
+    font-size: 2.4rem;
+    margin-bottom: 15px;
+    color: #111111;
+}
+
+.main-nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.main-nav a {
+    display: block;
+    text-decoration: none;
+}
