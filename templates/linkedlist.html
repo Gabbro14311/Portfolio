@@ -25,7 +25,8 @@
         <form action="/works/linkedlist" method="post">
             <div>
                 <label for="data">Enter data:</label>
-                <input type="text" id="data" name="inputString">
+                <input type="text" id="data" name="inputValue">
+                <input type="text" id="data" name="inputNode">
             </div>
 
             <div>
@@ -33,10 +34,10 @@
                 <select id="operation" name="action">
                     <option value="insert_at_beginning">Insert at Beginning</option>
                     <option value="insert_at_end">Insert at End</option>
-                    <option value="insert_at">Insert at</option>
+                    <option value="insert_after">Insert After</option>
                     <option value="remove_at_beginning">Remove at Beginning</option>
                     <option value="remove_at_end">Remove at End</option>
-                    <option value="remove_at">Remove at</option>
+                    <option value="remove">Remove Value</option>
                     <option value="search">Search</option>
                 </select>
             </div>
@@ -44,6 +45,19 @@
             <input type="submit" value="Execute">
 
         </form>
+
+        {% if result %}
+        <p>{{result}}</p>
+        {% endif %}
+
+        <h3>Current Linked List:</h3>
+        <ul>
+            {% for item in list_values %}
+                <li>{{item}}</li>
+            {% else %}
+                <li>The linked list is currently empty</li>
+            {% endfor %}
+        </ul>
     </header>
 </body>
 </html>

@@ -8,7 +8,7 @@ class LinkedList:
         self.head = None
         self.tail = None
 
-    def insert_at_beginning(self):
+    def insert_at_beginning(self, data):
         new_node = Node(data)
         if self.head:
             new_node.next = self.head
@@ -34,11 +34,11 @@ class LinkedList:
             current_node = current_node.next
         return False
     
-    def printLinkedList(self):
-        current_node = self.head
-        while current_node:
-            print(current_node.data)
-            current_node = current_node.next
+    # def printLinkedList(self):
+    #     current_node = self.head
+    #     while current_node:
+    #         print(current_node.data)
+    #         current_node = current_node.next
 
     def remove_beginning(self):
         if not self.head:
@@ -62,13 +62,12 @@ class LinkedList:
         if self.head == self.tail:
             self.head = None
             self.tail = None
-        return removed_data
+        else:
+            while current_node.next != self.tail:
+                current_node = current_node.next
 
-        while current_node.next != self.tail:
-            current_node = current_node.next
-
-        current_node.next = None
-        self.tail = current_node
+            current_node.next = None
+            self.tail = current_node
 
         return removed_data
 
@@ -115,6 +114,14 @@ class LinkedList:
             self.tail = new_node
 
         return True
+
+    def to_list(self):
+        data = []
+        current_node = self.head
+        while current_node:
+            data.append(current_node.data)
+            current_node = current_node.next
+        return data
 
 
 
