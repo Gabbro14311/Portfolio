@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
+from dsa import LinkedList
 import math
 
+
 app = Flask(__name__)
+my_linked_list = LinkedList()
 
 @app.route('/')
 def index():
@@ -54,12 +57,66 @@ def areaofatriangle():
     
     return render_template('areaofatriangle.html', result=result)
 
-@app.route('/works/linkedlist')
+@app.route('/works/linkedlist', methods=['GET', 'POST'])
 def linkedlist():
-    return render_template('linkedlist.html')
-  
-        
+    result = None
+    if request.method == 'POST':
+        try:
+            input_value = request.form.get('inputValue', '')
+            input_node = request.form.get('inputNode', '')
+            selected_action = request.form.get('action', '')
 
+            if selected_action == "insert_at_beginning":
+                my_linked_list.insert_at_beginning(input_value)
+                result = f"{input_value}, successfully added!"
+
+            elif selected_action == "insert_at_end":
+                my_linked_list.insert_at_end(input_value)
+                result = f"{input_value}, successfully added!"
+
+            elif selected_action == "insert_after":
+                inserted = my_linked_list.insert_after(input_node, input_value)
+                if inserted:
+                    result = f"{input_value}, was sucessfully added after {input_node}!"
+                else:
+                    result = f"Task aborted. {input_node} not found!"
+                    
+            elif selected_action == "remove_at_beginning":
+                removed_data = my_linked_list.remove_beginning()
+                result = f"{removed_data}, successfully removed!"
+
+            elif selected_action == "remove_at_end":
+                removed_data = my_linked_list.remove_at_end()
+                result = f"{removed_data}, successfully removed!"
+
+            elif selected_action == "remove":
+                removed_data = my_linked_list.remove_at(input_value)
+                if removed_data == None:
+                    result = f"{input_value} does not exist!"
+                else:
+                    result = f"{input_value}, successfully removed!"
+
+            elif selected_action == "search":
+                found = my_linked_list.search(input_value)
+                
+                if found:
+                    result = f"{input_value} was found in the Linked List!"
+                else:
+                    result = f"{input_value} was not found in the Linked List!"
+
+            else:
+                raise KeyError
+
+
+
+        except Exception as e:
+            print("ERROR:", e)
+            result = "An error has occured"
+
+    current_list = my_linked_list.to_list()
+    return render_template('linkedlist.html', list_values=current_list, result=result)
+
+  
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
