@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infix to Postfix</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Welcome to my Portfolio</h1>
+        <nav class="main-nav"> 
+            <ul> 
+                <li><a href="/">Home</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/works">Works</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+        <hr class="header-divider">
+    </header>
+
+    <header class="ito-header">
+        <h1>Infix to Postfix</h1>
+        <form action="/works/stack/infixtopostfix" method="post">
+            <label for="equation">Enter an equation:</label>
+            <input type="text" id="equation" name="inputEquation" required>
+            <input type="submit" value="Convert">
+        </form>
+
+        {% if result is not none %}
+        <p>The Postfix for this given equation is: {{result}}</p>
+        {% endif %}
+    </header>
+</body>
+</html>

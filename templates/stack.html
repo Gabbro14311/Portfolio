@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Welcome to my Portfolio</h1>
+        <nav class="main-nav"> 
+            <ul> 
+                <li><a href="/">Home</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/works">Works</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+        <hr class="header-divider">
+    </header>
+
+    <header class="stack-header">
+        <h1>Stack</h1>
+        <form action="/works/stack" method="post">
+            <div>
+                <label for="data">Enter data:</label>
+                <input type="text" id="data" name="inputValue">
+            </div>
+
+            <div>
+                <label for="operation">Choose an action:</label>
+                <select id="operation" name="action">
+                    <option value="push">Push</option>
+                    <option value="pop">Pop</option>
+                    <option value="peek">Peek</option>
+                    <option value="is_empty">Is Empty</option>
+                </select>
+            </div>
+
+            <input type="submit" value="Execute">
+
+        </form>
+        
+        {% if result %}
+        <p>{{result}}</p>
+        {% endif %}
+
+        <h3>Current Stack:</h3>
+        <ul>
+            {% for item in list_values %}
+                <li>{{item}}</li>
+            {% else %}
+                <l1>The stack is currently empty</l1>
+            {% endfor %}
+        </ul>
+    </header>
+</body>
+</html>

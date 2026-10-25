@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request
-from dsa import LinkedList
+from dsa import LinkedList, Stack, InfixToPostfix, ReverseStrings, Queue
 import math
 
 
 app = Flask(__name__)
 my_linked_list = LinkedList()
+my_stack = Stack()
+my_queue = Queue()
 
 @app.route('/')
 def index():
@@ -61,10 +63,11 @@ def areaofatriangle():
 def linkedlist():
     result = None
     if request.method == 'POST':
+        input_value = request.form.get('inputValue', '')
+        input_node = request.form.get('inputNode', '')
+        selected_action = request.form.get('action', '')
+
         try:
-            input_value = request.form.get('inputValue', '')
-            input_node = request.form.get('inputNode', '')
-            selected_action = request.form.get('action', '')
 
             if selected_action == "insert_at_beginning":
                 my_linked_list.insert_at_beginning(input_value)
@@ -91,7 +94,7 @@ def linkedlist():
 
             elif selected_action == "remove":
                 removed_data = my_linked_list.remove_at(input_value)
-                if removed_data == None:
+                if removed_data is None:
                     result = f"{input_value} does not exist!"
                 else:
                     result = f"{input_value}, successfully removed!"
@@ -107,16 +110,119 @@ def linkedlist():
             else:
                 raise KeyError
 
-
-
         except Exception as e:
             print("ERROR:", e)
-            result = "An error has occured"
+            result = "An error has occurred!"
 
     current_list = my_linked_list.to_list()
     return render_template('linkedlist.html', list_values=current_list, result=result)
 
-  
+@app.route('/works/stack', methods=['GET', 'POST'])
+def stack():
+    result = None
+    if request.method == "POST":
+        input_value = request.form.get('inputValue', '').strip()
+        selected_action = request.form.get('action', '')
+
+        try:
+            if selected_action == "push":
+                my_stack.push(input_value)
+                result = f"{input_value}, successfully added!"
+            elif selected_action == "pop":
+                removed_data = my_stack.pop()
+                if removed_data is None:
+                    result = "The stack is already empty!"
+                else:
+                    result = f"{removed_data}, successfully removed!"
+            elif selected_action == "peek":
+                top = my_stack.peek()
+                if top is None:
+                    result = "The stack is empty!"
+                else:
+                    result = f"{top}, is at the top!"
+
+            elif selected_action == "is_empty":
+                if my_stack.is_empty():
+                    result = "The stack is empty"
+                else:
+                    result = "The stack contains elements/items"
+            else:
+                raise KeyError
+
+        except Exception as e:
+            print("ERROR", e)
+            result = "An error has occurred!"
+
+    current_stack = my_stack.to_list()
+    return render_template('stack.html', list_values=current_stack, result=result)
+
+@app.route('/works/stack/reversestrings', methods=['GET', 'POST'])
+def reversestrings():
+    result = None
+    if request.method == "POST":
+        string_input = request.form.get('inputString', '')
+
+        try:
+            reversed_string = ReverseStrings(string_input)
+            result = reversed_string.reverse()
+
+        except Exception as e:
+            print("ERROR:", e)
+            result = "An error has occurred!"
+    return render_template('reversestrings.html', result=result)
+
+
+@app.route('/works/stack/infixtopostfix', methods=['GET', 'POST'])
+def infixtopostfix():
+    result = None
+    if request.method == "POST":
+        equation_input = request.form.get('inputEquation', '')
+
+        try:
+            equation = InfixToPostfix(equation_input)
+            result = equation.parse()
+
+        except Exception as e:
+            print("ERROR:", e)
+            result = "An error has occurred!"
+
+    return render_template('infixtopostfix.html', result=result)
+
+@app.route('/works/queuedequeue', methods=['GET', 'POST'])
+def queuedequeue():
+    result = None
+    if request.method == "POST":
+        input_value = request.form.get('inputValue', '')
+        selected_action = request.form.get('action', '')
+
+        try:
+            if selected_action == "enqueue":
+                my_queue.enqueue(input_value)
+                result = f"{input_value}, successfully added!"
+            elif selected_action == "dequeue":
+                removed_data = my_queue.dequeue()
+                if removed_data is None:
+                    result = "The queue is empty!"
+                else:
+                    result = f"{removed_data}, successfully removed!"
+            elif selected_action == "is_empty":
+                if my_queue.is_empty():
+                    result = "The queue is empty"
+                else:
+                    result = "The stack contains elements/items"
+            elif selected_action == "get_size":
+                size = my_queue.get_size()
+                result = f"The size of the queue is {size}"
+            else:
+                raise KeyError
+
+        except Exception as e:
+            print("ERROR!", e)
+            result = "An error has occurred!"
+
+    current_queue = my_queue.to_list()
+    return render_template('queuedequeue.html', list_values=current_queue, result=result)
+
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
