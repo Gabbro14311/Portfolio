@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Strings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Welcome to my Portfolio</h1>
+        <nav class="main-nav"> 
+            <ul> 
+                <li><a href="/">Home</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/works">Works</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+        <hr class="header-divider">
+    </header>
+
+    <header class="rs-header">
+        <h1>Reverse Strings</h1>
+        <form action="/works/stack/reversestrings" method="post">
+            <label for="text">Enter a string:</label>
+            <input type="text" id="text" name="inputString" required>
+            <input type="submit" value="Convert">
+        </form>
+
+        {% if result is not none %}
+        <p>The string reversed is: {{result}}</p>
+        {% endif %}
+    </header>
+</body>
+</html>
