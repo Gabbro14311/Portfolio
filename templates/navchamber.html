@@ -1,0 +1,5 @@
+{% macro return_to_works(label="RETURN TO WORKS") %}
+<div class="chamber-nav-footer">
+    <a href="{{ url_for('works') }}" class="return-works-link">{{ label }}</a>
+</div>
+{% endmacro %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'navchamber.html' import return_to_works %}
 
 {% block title %}Stack // Aperture Science{% endblock %}
 
@@ -54,6 +55,8 @@
                 {% endfor %}
             </ul>
         </div>
+
+        {{ return_to_works() }}
     </div>
 </div>
 

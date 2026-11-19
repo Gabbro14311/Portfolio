@@ -15,7 +15,7 @@
         <div class="telemetry-left">
             <span class="status-online">● GLaDOS v3.11 ONLINE</span>
             <span>SUBJECT ID: <span class="subject-id">042-JEAN</span></span>
-            <span>TEST CHAMBER: <span class="test-chamber">8 / 8</span></span>
+            <span>TEST CHAMBER: <span class="test-chamber">10 / 10</span></span>
         </div>
         <div class="telemetry-right">
             <span id="neuroStatus" class="status-safe">NEUROTOXIN: SAFE (0%)</span>
@@ -24,22 +24,16 @@
 
     <header class="site-header">
         <div class="aperture-sub">✧ APERTURE SCIENCE COMPUTER AIDED ENRICHMENT CENTER</div>
-        
+
         <div class="title-row">
-            <div class="chamber-badge">
-                <span>TEST</span>
-                <span class="badge-num">01</span>
-            </div>
+            <div class="portal-marker portal-orange" aria-hidden="true"></div>
 
             <h1 class="site-title">
                 WELCOME TO MY<br>
                 <span class="title-portfolio">PORTFOLIO</span>
             </h1>
 
-            <div class="chamber-badge">
-                <span>TEST</span>
-                <span class="badge-num">02</span>
-            </div>
+            <div class="portal-marker portal-blue" aria-hidden="true"></div>
         </div>
 
         <nav class="main-nav">
@@ -51,10 +45,12 @@
             </ul>
         </nav>
 
-        <div class="laser-rail-container">
-            <div class="laser-rail"></div>
-            <span class="laser-label">HIGH ENERGY LASER RAIL // DO NOT TOUCH</span>
-        </div>
+    <div class="laser-rail-container">
+         <div class="laser-rail">
+             <div class="laser-beam"></div>
+         </div>
+         <span class="laser-label">HIGH ENERGY LASER RAIL // DO NOT TOUCH</span>
+     </div>
     </header>
 
     <main class="content-wrapper">
@@ -119,7 +115,6 @@
                 document.body.classList.remove('no-transition');
             }, 50);
         });
-
 
         function triggerNeurotoxinEmergency() {
             const dialogue = document.getElementById('gladosDialogue');

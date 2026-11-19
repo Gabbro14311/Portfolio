@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% from 'navchamber.html' import return_to_works %}
+
+{% block title %}Binary Tree // Aperture Science{% endblock %}
+
+{% block content %}
+<div class="aperture-module-card" id="tree-section">
+    <div class="module-header">
+        <span class="module-title">[DATA_STRUCTURE // BINARY_TREE]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <div class="module-body">
+        <h2>BINARY TREE TOPOLOGY PROTOCOL</h2>
+        <p class="module-desc">Build, set root, search, delete, or insert nodes and inspect recursive traversals.</p>
+
+        <form method="post" id="treeForm" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="treeValues">NODE SEQUENCE (COMMA-SEPARATED; USE # FOR EMPTY SLOT):</label>
+                <input
+                    type="text"
+                    id="treeValues"
+                    name="values"
+                    value="{{ raw_values }}"
+                    placeholder="e.g. A, B, C, D, E, F, G"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="tree-action-grid">
+                <div class="input-wrapper">
+                    <label for="treeOperation">OPERATION MODE:</label>
+                    <select id="treeOperation" name="operation">
+                        <option value="build" {% if operation == 'build' %}selected{% endif %}>BUILD / REFRESH TREE</option>
+                        <option value="set_root" {% if operation == 'set_root' %}selected{% endif %}>SET / REPLACE ROOT</option>
+                        <option value="search" {% if operation == 'search' %}selected{% endif %}>SEARCH NODE</option>
+                        <option value="delete" {% if operation == 'delete' %}selected{% endif %}>DELETE NODE</option>
+                        <option value="insert_left" {% if operation == 'insert_left' %}selected{% endif %}>INSERT LEFT CHILD</option>
+                        <option value="insert_right" {% if operation == 'insert_right' %}selected{% endif %}>INSERT RIGHT CHILD</option>
+                        <option value="clear" {% if operation == 'clear' %}selected{% endif %}>CLEAR TREE</option>
+                    </select>
+                </div>
+
+                <div class="input-wrapper">
+                    <label for="targetVal">TARGET / ROOT / SEARCH / DELETE VALUE:</label>
+                    <input
+                        type="text"
+                        id="targetVal"
+                        name="target_val"
+                        value="{{ target_val }}"
+                        placeholder="e.g. E or ROOT_X"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <div class="tree-child-pair {% if operation not in ['insert_left', 'insert_right'] %}is-hidden{% endif %}" id="treeInsertFields">
+                <div class="input-wrapper">
+                    <label for="parentVal">PARENT NODE (FOR INSERT):</label>
+                    <input
+                        type="text"
+                        id="parentVal"
+                        name="parent_val"
+                        value="{{ parent_val }}"
+                        placeholder="e.g. B"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="input-wrapper">
+                    <label for="childVal">NEW CHILD VALUE (FOR INSERT):</label>
+                    <input
+                        type="text"
+                        id="childVal"
+                        name="child_val"
+                        value="{{ child_val }}"
+                        placeholder="e.g. X"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <div class="tree-btn-row">
+                <button type="submit" class="aperture-btn">
+                    <span>EXECUTE TREE PROTOCOL</span>
+                </button>
+                <button type="button" id="sampleTreeBtn" class="control-btn">
+                    LOAD SAMPLE TREE
+                </button>
+            </div>
+        </form>
+
+        {% if error_message %}
+        <div class="result-terminal">
+            <span class="result-label">// ERROR OUTPUT:</span>
+            <div class="result-value">{{ error_message }}</div>
+        </div>
+        {% endif %}
+
+        <div class="result-terminal">
+            <div class="result-header-row">
+                <div>
+                    <span class="result-label">// SYSTEM LOG:</span>
+                    <div class="result-value">{{ status_log }}</div>
+                </div>
+                <span class="result-count">{{ node_count }} NODES · HEIGHT {{ tree_height }}</span>
+            </div>
+
+            <div class="tree-stage" id="treeVisualStage">
+                <svg id="treeArrowSvg" class="tree-arrows-svg" aria-hidden="true"></svg>
+
+                {% if levels and levels|length > 0 %}
+                    {% for level in levels %}
+                        <div class="tree-level">
+                            <span class="tree-level-tag">L{{ loop.index0 }}</span>
+                            <div class="tree-level-nodes">
+                                {% for item in level %}
+                                    <div class="tree-node-wrapper">
+                                        <div
+                                            class="tree-circle-node {% if highlighted_val is not none and item.value|string == highlighted_val|string %}is-highlighted{% endif %}"
+                                            data-node-id="{{ item.id }}"
+                                            data-parent-id="{{ item.parent_id if item.parent_id is not none else '' }}"
+                                        >
+                                            <span class="tree-node-val">{{ item.value }}</span>
+                                        </div>
+                                        <span class="tree-node-rel">{{ item.relation }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="tree-empty-msg">// NO ACTIVE NODES IN TREE.</p>
+                {% endif %}
+            </div>
+
+            <div class="traversal-grid">
+                <div class="traversal-box">
+                    <span class="traversal-label">PRE-ORDER (ROOT · LEFT · RIGHT)</span>
+                    <div class="traversal-seq">{{ preorder_out }}</div>
+                </div>
+                <div class="traversal-box">
+                    <span class="traversal-label">IN-ORDER (LEFT · ROOT · RIGHT)</span>
+                    <div class="traversal-seq">{{ inorder_out }}</div>
+                </div>
+                <div class="traversal-box">
+                    <span class="traversal-label">POST-ORDER (LEFT · RIGHT · ROOT)</span>
+                    <div class="traversal-seq">{{ postorder_out }}</div>
+                </div>
+            </div>
+        </div>
+
+        {{ return_to_works() }}
+    </div>
+</div>
+
+<script>
+(() => {
+    const treeForm = document.getElementById("treeForm");
+    if (treeForm) {
+        treeForm.addEventListener("submit", () => {
+            sessionStorage.setItem("treeScrollY", String(window.scrollY));
+        });
+    }
+
+    const savedScrollY = sessionStorage.getItem("treeScrollY");
+    if (savedScrollY !== null) {
+        sessionStorage.removeItem("treeScrollY");
+        const targetY = Number(savedScrollY);
+        if (!Number.isNaN(targetY)) {
+            window.scrollTo({ top: targetY, behavior: "instant" });
+        }
+    }
+
+    const opSelect = document.getElementById("treeOperation");
+    const insertFields = document.getElementById("treeInsertFields");
+    function syncInsertFields() {
+        if (!opSelect || !insertFields) return;
+        const isInsert =
+            opSelect.value === "insert_left" || opSelect.value === "insert_right";
+        insertFields.classList.toggle("is-hidden", !isInsert);
+    }
+
+    if (opSelect) {
+        opSelect.addEventListener("change", syncInsertFields);
+    }
+    syncInsertFields();
+
+    const sampleBtn = document.getElementById("sampleTreeBtn");
+    const valuesInput = document.getElementById("treeValues");
+    if (sampleBtn && valuesInput) {
+        const samples = [
+            "A, B, C, D, E, F, G",
+            "1, 2, 3, 4, 5, #, 6",
+            "10, 20, 30, 40, #, 50, 60",
+        ];
+        let sampleIdx = 0;
+
+        sampleBtn.addEventListener("click", () => {
+            sampleIdx = (sampleIdx + 1) % samples.length;
+            valuesInput.value = samples[sampleIdx];
+            if (opSelect) {
+                opSelect.value = "build";
+                syncInsertFields();
+            }
+            valuesInput.focus();
+        });
+    }
+
+    const stage = document.getElementById("treeVisualStage");
+    const svg = document.getElementById("treeArrowSvg");
+    if (!stage || !svg) return;
+
+    function createSvgEl(tag, attrs) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v)));
+        return el;
+    }
+
+    function appendArrow(container, parentEl, childEl, stageRect, isHighlighted) {
+        const pRect = parentEl.getBoundingClientRect();
+        const cRect = childEl.getBoundingClientRect();
+
+        const offsetX = stage.scrollLeft - stageRect.left;
+        const offsetY = stage.scrollTop - stageRect.top;
+
+        const pCenterX = pRect.left + pRect.width / 2 + offsetX;
+        const pCenterY = pRect.top + pRect.height / 2 + offsetY;
+        const pRadius = Math.min(pRect.width, pRect.height) / 2;
+
+        const cCenterX = cRect.left + cRect.width / 2 + offsetX;
+        const cCenterY = cRect.top + cRect.height / 2 + offsetY;
+        const cRadius = Math.min(cRect.width, cRect.height) / 2;
+
+        const dx = cCenterX - pCenterX;
+        const dy = cCenterY - pCenterY;
+        const dist = Math.hypot(dx, dy) || 1;
+
+        const ux = dx / dist;
+        const uy = dy / dist;
+
+        const x1 = pCenterX + ux * (pRadius + 1);
+        const y1 = pCenterY + uy * (pRadius + 1);
+        const x2 = cCenterX - ux * (cRadius + 1);
+        const y2 = cCenterY - uy * (cRadius + 1);
+
+        const lineClass = isHighlighted ? "tree-arrow-line is-highlighted" : "tree-arrow-line";
+        const tipClass = isHighlighted ? "tree-arrow-tip-poly is-highlighted" : "tree-arrow-tip-poly";
+
+        container.appendChild(createSvgEl("line", {
+            x1: x1.toFixed(1),
+            y1: y1.toFixed(1),
+            x2: x2.toFixed(1),
+            y2: y2.toFixed(1),
+            class: lineClass,
+        }));
+
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const headLen = 9;
+        const spread = Math.PI / 7;
+
+        const p1x = x2 - headLen * Math.cos(angle - spread);
+        const p1y = y2 - headLen * Math.sin(angle - spread);
+        const p2x = x2 - headLen * Math.cos(angle + spread);
+        const p2y = y2 - headLen * Math.sin(angle + spread);
+
+        container.appendChild(createSvgEl("polygon", {
+            points: `${x2.toFixed(1)},${y2.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`,
+            class: tipClass,
+        }));
+    }
+
+    function drawArrows() {
+        const sr = stage.getBoundingClientRect();
+        const width = Math.max(stage.scrollWidth, Math.round(sr.width));
+        const height = Math.max(stage.scrollHeight, Math.round(sr.height));
+        if (width <= 0 || height <= 0) return;
+
+        svg.setAttribute("width", String(width));
+        svg.setAttribute("height", String(height));
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+        while (svg.firstChild) {
+            svg.removeChild(svg.firstChild);
+        }
+
+        const nodes = Array.from(stage.querySelectorAll(".tree-circle-node"));
+        if (nodes.length < 2) return;
+
+        const nodeById = new Map();
+        nodes.forEach((el) => {
+            if (el.dataset.nodeId) {
+                nodeById.set(el.dataset.nodeId, el);
+            }
+        });
+
+        nodes.forEach((childEl) => {
+            const parentId = childEl.dataset.parentId;
+            if (!parentId) return;
+
+            const parentEl = nodeById.get(parentId);
+            if (!parentEl) return;
+
+            const isHighlighted =
+                parentEl.classList.contains("is-highlighted") ||
+                childEl.classList.contains("is-highlighted");
+
+            appendArrow(svg, parentEl, childEl, sr, isHighlighted);
+        });
+    }
+
+    if (typeof ResizeObserver !== "undefined") {
+        const ro = new ResizeObserver(() => drawArrows());
+        ro.observe(stage);
+    }
+
+    window.addEventListener("load", drawArrows);
+    window.addEventListener("resize", drawArrows);
+    requestAnimationFrame(() => requestAnimationFrame(drawArrows));
+    setTimeout(drawArrows, 150);
+})();
+</script>
+{% endblock %}

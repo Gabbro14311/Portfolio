@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{% from 'navchamber.html' import return_to_works %}
+
+{% block title %}Sorting Algorithms // Aperture Science{% endblock %}
+
+{% block content %}
+<div class="aperture-module-card">
+    <div class="module-header">
+        <span class="module-title">[DATA_PROCESSOR // SORTING_ALGORITHMS]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <div class="module-body">
+        <h2>SORTING EXECUTION PROTOCOL</h2>
+        <p class="module-desc">Input numeric sequence for ordered array and bar magnitude output.</p>
+
+        <form method="post" id="sortForm" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="algorithm">SELECT SORTING ALGORITHM:</label>
+                <select id="algorithm" name="algorithm">
+                    {% for key, info in algorithms.items() %}
+                        <option value="{{ key }}" {% if selected_algo == key %}selected{% endif %}>
+                            {{ info[0] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-wrapper">
+                <label for="arrayCount">ARRAY SIZE (NUMBER OF ELEMENTS):</label>
+                <div class="array-size-row">
+                    <select id="arrayCount" class="array-size-select">
+                        <option value="5">5 ELEMENTS</option>
+                        <option value="7" selected>7 ELEMENTS</option>
+                        <option value="10">10 ELEMENTS</option>
+                        <option value="15">15 ELEMENTS</option>
+                        <option value="20">20 ELEMENTS</option>
+                    </select>
+                    <button type="button" id="generateArrayBtn" class="control-btn">
+                        GENERATE ARRAY
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-wrapper">
+                <label for="numbers">INPUT NUMBER SEQUENCE:</label>
+                <input
+                    type="text"
+                    id="numbers"
+                    name="numbers"
+                    value="{{ raw_input or '' }}"
+                    placeholder="Enter numeric sequence..."
+                    required
+                    autocomplete="off"
+                >
+            </div>
+
+            <button type="submit" class="aperture-btn">
+                <span>EXECUTE SORT</span>
+            </button>
+        </form>
+
+        {% if error_message %}
+        <div class="result-terminal">
+            <span class="result-label">// ERROR OUTPUT:</span>
+            <div class="result-value">{{ error_message }}</div>
+        </div>
+        {% endif %}
+
+        {% if sorted_result is not none and sorted_result|length > 0 %}
+            {% set max_abs = sorted_result | map('abs') | max %}
+            {% set scale_base = max_abs if max_abs > 0 else 1 %}
+
+            <div class="result-terminal">
+                <div class="result-header-row">
+                    <div>
+                        <span class="result-label">// {{ algorithm_label | upper }} RESULT:</span>
+                        <div class="result-value">{{ sorted_result }}</div>
+                    </div>
+                    <span class="result-count">{{ sorted_result|length }} ELEMENTS</span>
+                </div>
+
+                <div class="visualizer-toolbar">
+                    <div class="control-group">
+                        <button type="button" id="togglePlayBtn" class="control-btn">PLAY</button>
+                        <button type="button" id="stepBtn" class="control-btn">STEP</button>
+                        <button type="button" id="resetBtn" class="control-btn">RESET</button>
+                    </div>
+
+                    <div class="speed-group">
+                        <label for="speedRange" class="speed-label">
+                            SPEED: <span id="speedReadout">1x</span>
+                        </label>
+                        <input
+                            type="range"
+                            id="speedRange"
+                            min="1"
+                            max="5"
+                            step="1"
+                            value="3"
+                            class="speed-slider"
+                        >
+                    </div>
+                </div>
+
+                <div class="bar-chart" id="sortBarChart">
+                    {% for val in sorted_result %}
+                        {% set height_pct = ((val | abs) / scale_base * 100) | round(1) %}
+                        {% set safe_height = height_pct if height_pct >= 8 else 8 %}
+                        <div class="bar-column">
+                            <span class="bar-value">{{ val }}</span>
+                            <div class="bar-track">
+                                <div
+                                    class="bar-fill {% if val < 0 %}bar-negative{% else %}bar-positive{% endif %}"
+                                    data-height="{{ safe_height }}"
+                                ></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="bar-legend">
+                    <span class="legend-item"><span class="legend-dot dot-active"></span>COMPARE</span>
+                    <span class="legend-item"><span class="legend-dot dot-swapped"></span>SWAP / MOVE</span>
+                    <span class="legend-item"><span class="legend-dot dot-sorted"></span>LOCKED</span>
+                </div>
+            </div>
+        {% endif %}
+
+        <p class="module-desc module-attribution">
+            Source attribution: Adapted from ehis/sort.py (forked from mattmcclean/sort.py) on GitHub.
+            Accessed 2026-11-19; adapted for Flask portfolio integration.
+        </p>
+
+        {{ return_to_works() }}
+    </div>
+</div>
+
+<script>
+(() => {
+    const sortForm = document.getElementById("sortForm");
+    if (sortForm) {
+        sortForm.addEventListener("submit", () => {
+            sessionStorage.setItem("sortingScrollY", String(window.scrollY));
+        });
+    }
+
+    const savedScrollY = sessionStorage.getItem("sortingScrollY");
+    if (savedScrollY !== null) {
+        sessionStorage.removeItem("sortingScrollY");
+        const targetY = Number(savedScrollY);
+        if (!Number.isNaN(targetY)) {
+            window.scrollTo({ top: targetY, behavior: "instant" });
+        }
+    }
+
+    const arrayCountEl = document.getElementById("arrayCount");
+    const generateBtn = document.getElementById("generateArrayBtn");
+    const numbersInput = document.getElementById("numbers");
+    if (arrayCountEl && generateBtn && numbersInput) {
+        function buildRandomArray(count) {
+            const safeCount = Math.max(2, Math.min(50, Number(count) || 7));
+            const items = [];
+            for (let i = 0; i < safeCount; i += 1) {
+                items.push(Math.floor(Math.random() * 95) + 5);
+            }
+            return items.join(", ");
+        }
+
+        function getSequenceItems() {
+            return numbersInput.value
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+        }
+
+        const existingItems = getSequenceItems();
+        if (existingItems.length === 0) {
+            // Only populate a default sequence when the input is actually empty
+            numbersInput.value = buildRandomArray(Number(arrayCountEl.value) || 7);
+        } else {
+            // Keep custom/submitted values intact and align the dropdown if possible
+            const matchedOption = Array.from(arrayCountEl.options).find(
+                (opt) => Number(opt.value) === existingItems.length
+            );
+            if (matchedOption) {
+                arrayCountEl.value = matchedOption.value;
+            }
+        }
+
+        generateBtn.addEventListener("click", () => {
+            numbersInput.value = buildRandomArray(Number(arrayCountEl.value) || 7);
+            numbersInput.focus();
+        });
+
+        arrayCountEl.addEventListener("change", () => {
+            numbersInput.value = buildRandomArray(Number(arrayCountEl.value) || 7);
+        });
+    }
+})();
+</script>
+
+{% if sorted_result is not none and sorted_result|length > 0 %}
+<script id="sortStepsData" type="application/json">{{ sort_steps | tojson }}</script>
+<script>
+(() => {
+    const chart = document.getElementById("sortBarChart");
+    const stepsEl = document.getElementById("sortStepsData");
+    if (!chart || !stepsEl) return;
+
+    const steps = JSON.parse(stepsEl.textContent || "[]");
+    const togglePlayBtn = document.getElementById("togglePlayBtn");
+    const stepBtn = document.getElementById("stepBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const speedRange = document.getElementById("speedRange");
+    const speedReadout = document.getElementById("speedReadout");
+
+    const speedPresets = [
+        { label: "0.25x", delay: 1200 },
+        { label: "0.5x", delay: 700 },
+        { label: "1x", delay: 400 },
+        { label: "2x", delay: 200 },
+        { label: "4x", delay: 80 },
+    ];
+
+    const maxAbs = Math.max(1, ...steps.flatMap((s) => (s.values || []).map((v) => Math.abs(Number(v) || 0))));
+    let stepIdx = 0;
+    let timerId = null;
+
+    function getPreset() {
+        const idx = (Number(speedRange ? speedRange.value : 3) || 3) - 1;
+        return speedPresets[Math.max(0, Math.min(speedPresets.length - 1, idx))];
+    }
+
+    function getDelay() {
+        return getPreset().delay;
+    }
+
+    function updateSpeedLabel() {
+        if (speedReadout) {
+            speedReadout.textContent = getPreset().label;
+        }
+    }
+
+    function renderStep(index) {
+        if (!steps.length) return;
+        const clamped = Math.max(0, Math.min(steps.length - 1, index));
+        const step = steps[clamped];
+        const values = step.values || [];
+        const activeSet = new Set(step.active || []);
+        const swappedSet = new Set(step.swapped || []);
+        const sortedSet = new Set(step.sorted || []);
+
+        const columns = chart.querySelectorAll(".bar-column");
+        columns.forEach((col, idx) => {
+            const val = values[idx];
+            const valEl = col.querySelector(".bar-value");
+            const barEl = col.querySelector(".bar-fill");
+            if (valEl) valEl.textContent = val;
+            if (!barEl) return;
+
+            const pct = Math.max(8, Math.min(100, (Math.abs(Number(val) || 0) / maxAbs) * 100));
+            barEl.dataset.height = pct.toFixed(1);
+            barEl.style.height = `${pct}%`;
+
+            barEl.classList.remove("bar-positive", "bar-negative", "bar-active", "bar-swapped", "bar-sorted");
+            barEl.classList.add(Number(val) < 0 ? "bar-negative" : "bar-positive");
+
+            if (swappedSet.has(idx)) {
+                barEl.classList.add("bar-swapped");
+            } else if (activeSet.has(idx)) {
+                barEl.classList.add("bar-active");
+            } else if (sortedSet.has(idx)) {
+                barEl.classList.add("bar-sorted");
+            }
+        });
+    }
+
+    function stopPlaying() {
+        if (timerId !== null) {
+            clearInterval(timerId);
+            timerId = null;
+        }
+        if (togglePlayBtn) togglePlayBtn.textContent = "PLAY";
+    }
+
+    function startPlaying() {
+        stopPlaying();
+        if (!steps.length) return;
+        if (stepIdx >= steps.length - 1) {
+            stepIdx = 0;
+            renderStep(stepIdx);
+        }
+        if (togglePlayBtn) togglePlayBtn.textContent = "PAUSE";
+        timerId = setInterval(() => {
+            if (stepIdx < steps.length - 1) {
+                stepIdx += 1;
+                renderStep(stepIdx);
+            } else {
+                stopPlaying();
+            }
+        }, getDelay());
+    }
+
+    if (togglePlayBtn) {
+        togglePlayBtn.addEventListener("click", () => {
+            if (timerId !== null) stopPlaying();
+            else startPlaying();
+        });
+    }
+
+    if (stepBtn) {
+        stepBtn.addEventListener("click", () => {
+            stopPlaying();
+            if (stepIdx < steps.length - 1) {
+                stepIdx += 1;
+                renderStep(stepIdx);
+            }
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            stopPlaying();
+            stepIdx = 0;
+            renderStep(stepIdx);
+        });
+    }
+
+    if (speedRange) {
+        speedRange.addEventListener("input", () => {
+            updateSpeedLabel();
+            if (timerId !== null) startPlaying();
+        });
+    }
+
+    updateSpeedLabel();
+    renderStep(0);
+})();
+</script>
+{% endif %}
+{% endblock %}

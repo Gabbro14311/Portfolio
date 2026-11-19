@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Cake</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="cake-photo-body is-white-gate" id="cakeGateBody">
+    <div class="cake-curtain" id="cakeCurtain" aria-hidden="true"></div>
+
+    <main class="cake-photo-wrap is-shaking" id="cakeGateWrap" data-destination="{{ url_for('index') }}">
+        <button type="button" class="cake-photo-btn" id="cakePhotoBtn" aria-label="Click cake to claim">
+            <img
+                src="{{ url_for('static', filename='images/cake.png') }}"
+                alt="Cake"
+                class="cake-photo-img"
+                id="cakePhotoImg"
+            >
+        </button>
+        <p class="cake-photo-caption" id="cakeCaption">click the cake for free cake</p>
+    </main>
+
+    <script>
+    (() => {
+        const body = document.getElementById("cakeGateBody");
+        const wrap = document.getElementById("cakeGateWrap");
+        const btn = document.getElementById("cakePhotoBtn");
+        const img = document.getElementById("cakePhotoImg");
+        const caption = document.getElementById("cakeCaption");
+        const curtain = document.getElementById("cakeCurtain");
+
+        if (!body || !wrap || !btn) return;
+
+        wrap.classList.remove("is-shaking");
+
+        let clicked = false;
+
+        btn.addEventListener("click", () => {
+            if (clicked) return;
+            clicked = true;
+
+            const dest = wrap.dataset.destination;
+
+            if (img) img.classList.add("is-vanished");
+            btn.classList.add("is-vanished");
+
+            body.classList.remove("is-white-gate");
+            body.classList.add("is-lie-mode", "is-glitching");
+            wrap.classList.add("is-shaking");
+
+            if (caption) {
+                caption.textContent = "the cake is a lie";
+                caption.classList.add("is-lie-caption", "is-text-glitch");
+            }
+
+            setTimeout(() => {
+                body.classList.remove("is-glitching");
+                wrap.classList.remove("is-shaking");
+            }, 950);
+
+            setTimeout(() => {
+                if (caption) caption.classList.remove("is-text-glitch");
+            }, 1450);
+
+            setTimeout(() => {
+                if (curtain) curtain.classList.add("is-active");
+            }, 2150);
+
+            setTimeout(() => {
+                if (dest) window.location.href = dest;
+            }, 2850);
+        });
+    })();
+    </script>
+</body>
+</html>
