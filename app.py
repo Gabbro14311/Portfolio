@@ -267,37 +267,48 @@ def queuedequeue():
     current_queue = my_queue.to_list()
     return render_template('queuedequeue.html', list_values=current_queue, result=result, selected_action=selected_action)
 
-@app.route('/contact', methods=['GET', 'POST'])
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
     success = None
-    if request.method == 'POST':
-        subject_name = request.form.get('subject_name')
-        sender_email = request.form.get('email', '').strip()
-        message_body = request.form.get('message')
-        
-        receiver_email = os.getenv('MAIL_USERNAME')
-        app_password = os.getenv('MAIL_PASSWORD')
-        
-        msg = MIMEMultipart()
-        msg['Subject'] = f"[Aperture Dispatch] Transmission from {subject_name}"
-        msg['From'] = receiver_email
-        msg['To'] = receiver_email
-        
-        body = f"Subject / Name: {subject_name}\nSender Email: {sender_email}\n\nMessage:\n{message_body}"
-        msg.attach(MIMEText(body, 'plain'))
-        
-        try:
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(receiver_email, app_password)
-            server.sendmail(receiver_email, receiver_email, msg.as_string())
-            server.quit()
-            success = True
-        except Exception as e:
-            print(f"Transmission failed: {e}")
-            success = False
 
-    return render_template('contact.html', success=success)
+    if request.method == "POST":
+        subject_name = (request.form.get("subject_name") or "").strip()
+        sender_email = (request.form.get("email") or "").strip()
+        message_body = (request.form.get("message") or "").strip()
+
+        receiver_email = os.getenv("MAIL_USERNAME")
+        app_password = os.getenv("MAIL_PASSWORD")
+
+        if not subject_name or not sender_email or not message_body:
+            success = False
+        elif not receiver_email or not app_password:
+            print("Transmission failed: MAIL_USERNAME or MAIL_PASSWORD is missing.")
+            success = False
+        else:
+            msg = MIMEMultipart()
+            msg["Subject"] = f"[Aperture Dispatch] Transmission from {subject_name}"
+            msg["From"] = receiver_email
+            msg["To"] = receiver_email
+            msg["Reply-To"] = sender_email
+
+            body = (
+                f"Subject / Name: {subject_name}\n"
+                f"Sender Email: {sender_email}\n\n"
+                f"Message:\n{message_body}"
+            )
+            msg.attach(MIMEText(body, "plain"))
+
+            try:
+                with smtplib.SMTP("smtp.gmail.com", 587, timeout=10) as server:
+                    server.starttls()
+                    server.login(receiver_email, app_password)
+                    server.sendmail(receiver_email, receiver_email, msg.as_string())
+                success = True
+            except Exception as e:
+                print(f"Transmission failed: {e}")
+                success = False
+
+    return render_template("contact.html", success=success)
 
 def _parse_tree_tokens(raw_text):
     """Parse comma-separated tokens; use '#' or 'null' to represent empty child slots."""
