@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'navchamber.html' import return_to_works %}
 
 {% block title %}Infix to Postfix // Aperture Science{% endblock %}
 
@@ -32,6 +33,8 @@
             <div class="result-value">{{ result }}</div>
         </div>
         {% endif %}
+
+        {{ return_to_works() }}
     </div>
 </div>
 {% endblock %}
