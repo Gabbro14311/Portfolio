@@ -1,23 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Home | Aperture Science{% endblock %}
+
+{% block content %}
+<div class="hero-card">
+    <div class="tracking-badge">EYE TRACKING: ACTIVE</div>
+
+    <div id="eyeContainer" class="central-eye-container">
+        <div class="eye-dashed-ring"></div>
+        <div id="mainPupil" class="central-pupil"></div>
+    </div>
+
+    <h2 class="hero-heading">SUBJECT ENRICHMENT ASSESSMENT</h2>
+    
+    <p class="hero-description">
+        Welcome to the Aperture Science Central Terminal. This portfolio contains full-stack web applications, front-end designs, and data protocols engineered under GLaDOS supervision.
+    </p>
+</div>
+{% endblock %}

@@ -1,8 +1,13 @@
 from flask import Flask, render_template, request
 from dsa import LinkedList, Stack, InfixToPostfix, ReverseStrings, Queue
 import math
+import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from dotenv import load_dotenv
 
-
+load_dotenv()
 app = Flask(__name__)
 my_linked_list = LinkedList()
 my_stack = Stack()
@@ -62,13 +67,14 @@ def areaofatriangle():
 @app.route('/works/linkedlist', methods=['GET', 'POST'])
 def linkedlist():
     result = None
+    selected_action = 'insert_at_beginning'  
+    
     if request.method == 'POST':
         input_value = request.form.get('inputValue', '')
         input_node = request.form.get('inputNode', '')
-        selected_action = request.form.get('action', '')
-
+        selected_action = request.form.get('action', 'insert_at_beginning')
+        
         try:
-
             if selected_action == "insert_at_beginning":
                 my_linked_list.insert_at_beginning(input_value)
                 result = f"{input_value}, successfully added!"
@@ -80,10 +86,10 @@ def linkedlist():
             elif selected_action == "insert_after":
                 inserted = my_linked_list.insert_after(input_node, input_value)
                 if inserted:
-                    result = f"{input_value}, was sucessfully added after {input_node}!"
+                    result = f"{input_value}, was successfully added after {input_node}!"
                 else:
                     result = f"Task aborted. {input_node} not found!"
-                    
+
             elif selected_action == "remove_at_beginning":
                 removed_data = my_linked_list.remove_beginning()
                 result = f"{removed_data}, successfully removed!"
@@ -101,28 +107,29 @@ def linkedlist():
 
             elif selected_action == "search":
                 found = my_linked_list.search(input_value)
-                
                 if found:
                     result = f"{input_value} was found in the Linked List!"
                 else:
                     result = f"{input_value} was not found in the Linked List!"
-
             else:
                 raise KeyError
-
+                
         except Exception as e:
-            print("ERROR:", e)
+            print("ERROR!", e)
             result = "An error has occurred!"
 
     current_list = my_linked_list.to_list()
-    return render_template('linkedlist.html', list_values=current_list, result=result)
+    return render_template('linkedlist.html', list_values=current_list, result=result, selected_action=selected_action )
 
 @app.route('/works/stack', methods=['GET', 'POST'])
 def stack():
     result = None
+    selected_action = 'push'
+
     if request.method == "POST":
+        selected_action = request.form.get('action', 'push')
         input_value = request.form.get('inputValue', '').strip()
-        selected_action = request.form.get('action', '')
+
 
         try:
             if selected_action == "push":
@@ -154,7 +161,7 @@ def stack():
             result = "An error has occurred!"
 
     current_stack = my_stack.to_list()
-    return render_template('stack.html', list_values=current_stack, result=result)
+    return render_template('stack.html', list_values=current_stack, result=result, selected_action=selected_action)
 
 @app.route('/works/stack/reversestrings', methods=['GET', 'POST'])
 def reversestrings():
@@ -191,10 +198,12 @@ def infixtopostfix():
 @app.route('/works/queuedequeue', methods=['GET', 'POST'])
 def queuedequeue():
     result = None
+    selected_action = 'enqueue' 
+    
     if request.method == "POST":
-        input_value = request.form.get('inputValue', '')
-        selected_action = request.form.get('action', '')
-
+        input_value = request.form.get('inputValue', '') 
+        selected_action = request.form.get('action', 'enqueue')
+        
         try:
             if selected_action == "enqueue":
                 my_queue.enqueue(input_value)
@@ -209,23 +218,51 @@ def queuedequeue():
                 if my_queue.is_empty():
                     result = "The queue is empty"
                 else:
-                    result = "The stack contains elements/items"
+                    result = "The queue contains elements/items"
             elif selected_action == "get_size":
                 size = my_queue.get_size()
                 result = f"The size of the queue is {size}"
             else:
                 raise KeyError
-
+                
         except Exception as e:
             print("ERROR!", e)
             result = "An error has occurred!"
 
     current_queue = my_queue.to_list()
-    return render_template('queuedequeue.html', list_values=current_queue, result=result)
+    return render_template('queuedequeue.html', list_values=current_queue, result=result, selected_action=selected_action)
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    success = None
+    if request.method == 'POST':
+        subject_name = request.form.get('subject_name')
+        sender_email = request.form.get('email')
+        message_body = request.form.get('message')
+        
+        receiver_email = os.getenv('MAIL_USERNAME')
+        app_password = os.getenv('MAIL_PASSWORD')
+        
+        msg = MIMEMultipart()
+        msg['Subject'] = f"[Aperture Dispatch] Transmission from {subject_name}"
+        msg['From'] = receiver_email
+        msg['To'] = receiver_email
+        
+        body = f"Subject / Name: {subject_name}\nSender Email: {sender_email}\n\nMessage:\n{message_body}"
+        msg.attach(MIMEText(body, 'plain'))
+        
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(receiver_email, app_password)
+            server.sendmail(receiver_email, receiver_email, msg.as_string())
+            server.quit()
+            success = True
+        except Exception as e:
+            print(f"Transmission failed: {e}")
+            success = False
+
+    return render_template('contact.html', success=success)
 
 if __name__ == "__main__":
     app.run(debug=True)

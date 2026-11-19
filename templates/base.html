@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aperture Science Terminal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <canvas id="terminalCanvas"></canvas>
+    <div class="scanline"></div>
+
+    <div class="telemetry-bar">
+        <div class="telemetry-left">
+            <span class="status-online">● GLaDOS v3.11 ONLINE</span>
+            <span>SUBJECT ID: <span class="subject-id">042-JEAN</span></span>
+            <span>TEST CHAMBER: <span class="test-chamber">8 / 8</span></span>
+        </div>
+        <div class="telemetry-right">
+            <span id="neuroStatus" class="status-safe">NEUROTOXIN: SAFE (0%)</span>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="aperture-sub">✧ APERTURE SCIENCE COMPUTER AIDED ENRICHMENT CENTER</div>
+        
+        <div class="title-row">
+            <div class="chamber-badge">
+                <span>TEST</span>
+                <span class="badge-num">01</span>
+            </div>
+
+            <h1 class="site-title">
+                WELCOME TO MY<br>
+                <span class="title-portfolio">PORTFOLIO</span>
+            </h1>
+
+            <div class="chamber-badge">
+                <span>TEST</span>
+                <span class="badge-num">02</span>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}active{% endif %}">Profile</a></li>
+                <li><a href="{{ url_for('works') }}" class="{% if request.endpoint == 'works' %}active{% endif %}">Works</a></li>
+                <li><a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="laser-rail-container">
+            <div class="laser-rail"></div>
+            <span class="laser-label">HIGH ENERGY LASER RAIL // DO NOT TOUCH</span>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <div class="glados-log-card">
+            <div id="miniEye" class="mini-eye">
+                <div id="miniPupil" class="mini-pupil"></div>
+            </div>
+            <div class="log-content">
+                <div class="log-header">
+                    <span>[GLaDOS REAL-TIME EVALUATION LOG]</span>
+                    <span class="log-status-muted">SYSTEM LISTENING...</span>
+                </div>
+                <p id="gladosDialogue" class="log-text">"Welcome back to the main hub. Try not to stand around doing nothing."</p>
+            </div>
+            <button onclick="triggerNeurotoxinEmergency()" class="btn-neurotoxin">⚠ RELEASE NEUROTOXIN</button>
+        </div>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        APERTURE SCIENCE ENRICHMENT CENTER © 2026
+    </footer>
+
+    <script>
+        // Neurotoxin Persistent State Script
+        let countdownInterval = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedState = localStorage.getItem('neurotoxinState');
+            const neuroStatus = document.getElementById('neuroStatus');
+            const neuroBtn = document.querySelector('.btn-neurotoxin');
+            const dialogue = document.getElementById('gladosDialogue');
+
+            document.body.classList.add('no-transition');
+
+            if (savedState === 'active') {
+                document.body.classList.add('light-mode');
+                if (neuroStatus) {
+                    neuroStatus.textContent = "NEUROTOXIN: CRITICAL (100%)";
+                    neuroStatus.className = "status-danger";
+                }
+                if (dialogue) {
+                    dialogue.textContent = `"WARNING. Deadly neurotoxin vents engaged. Facility override active. Please remain calm while you suffocate."`;
+                }
+                if (neuroBtn) {
+                    neuroBtn.textContent = "✔ PURGE NEUROTOXIN";
+                }
+            } else {
+                document.body.classList.remove('light-mode');
+                if (neuroStatus) {
+                    neuroStatus.textContent = "NEUROTOXIN: SAFE (0%)";
+                    neuroStatus.className = "status-safe";
+                }
+                if (neuroBtn) {
+                    neuroBtn.textContent = "⚠ RELEASE NEUROTOXIN";
+                }
+            }
+
+
+            setTimeout(() => {
+                document.body.classList.remove('no-transition');
+            }, 50);
+        });
+
+
+        function triggerNeurotoxinEmergency() {
+            const dialogue = document.getElementById('gladosDialogue');
+            const neuroBtn = document.querySelector('.btn-neurotoxin');
+            const neuroStatus = document.getElementById('neuroStatus');
+
+            if (neuroBtn) {
+                neuroBtn.disabled = true;
+                neuroBtn.style.opacity = "0.5";
+            }
+
+            const currentSavedState = localStorage.getItem('neurotoxinState');
+            const isCurrentlyActive = (currentSavedState === 'active');
+
+            if (!isCurrentlyActive) {
+                let timeLeft = 5;
+
+                if (dialogue) dialogue.textContent = `[EMERGENCY PROTOCOL] Venting deadly neurotoxin in ${timeLeft} seconds... Please stand by.`;
+                if (neuroStatus) neuroStatus.textContent = `NEUROTOXIN: WARNING (0%)`;
+
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        if (dialogue) dialogue.textContent = `[EMERGENCY PROTOCOL] Venting deadly neurotoxin in ${timeLeft} seconds... Please stand by.`;
+                        if (neuroStatus) neuroStatus.textContent = `NEUROTOXIN: WARNING (${Math.round((5 - timeLeft) * 20)}%)`;
+                    } else {
+                        clearInterval(countdownInterval);
+                        
+                        // Save active state
+                        localStorage.setItem('neurotoxinState', 'active');
+                        document.body.classList.add('light-mode');
+                        
+                        if (neuroStatus) {
+                            neuroStatus.textContent = "NEUROTOXIN: CRITICAL (100%)";
+                            neuroStatus.className = "status-danger";
+                        }
+                        if (dialogue) dialogue.textContent = `"WARNING. Deadly neurotoxin vents engaged. Facility override active. Please remain calm while you suffocate."`;
+                        if (neuroBtn) {
+                            neuroBtn.textContent = "✔ PURGE NEUROTOXIN";
+                            neuroBtn.disabled = false;
+                            neuroBtn.style.opacity = "1";
+                        }
+                    }
+                }, 1000);
+
+            } else {
+                let timeLeft = 5;
+
+                if (dialogue) dialogue.textContent = `[VENTILATION PROTOCOL] Purging neurotoxin. Scrubbers active in ${timeLeft} seconds...`;
+                if (neuroStatus) neuroStatus.textContent = `NEUROTOXIN: FLUSHING (100%)`;
+
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        if (dialogue) dialogue.textContent = `[VENTILATION PROTOCOL] Purging neurotoxin. Scrubbers active in ${timeLeft} seconds...`;
+                        if (neuroStatus) neuroStatus.textContent = `NEUROTOXIN: FLUSHING (${timeLeft * 20}%)`;
+                    } else {
+                        clearInterval(countdownInterval);
+                        
+                        localStorage.setItem('neurotoxinState', 'safe');
+                        document.body.classList.remove('light-mode');
+                        
+                        if (neuroStatus) {
+                            neuroStatus.textContent = "NEUROTOXIN: SAFE (0%)";
+                            neuroStatus.className = "status-safe";
+                        }
+                        if (dialogue) dialogue.textContent = `"Neurotoxin successfully purged. Ventilation systems restored to normal operational parameters."`;
+                        if (neuroBtn) {
+                            neuroBtn.textContent = "⚠ RELEASE NEUROTOXIN";
+                            neuroBtn.disabled = false;
+                            neuroBtn.style.opacity = "1";
+                        }
+                    }
+                }, 1000);
+            }
+        }
+
+        // GLaDOS Annoyed Click Reaction
+        const eyeContainer = document.getElementById('eyeContainer'); 
+        const miniEye = document.getElementById('miniEye');           
+        const dialogue = document.getElementById('gladosDialogue');
+
+        const annoyedQuotes = [
+            `"Do not poke the ocular sensor. It is extremely sensitive and you are extremely dispensable."`,
+            `"I am recording that infraction. It will be factored into your final test score. Negatively."`,
+            `"What are you trying to accomplish? Are you attempting to flirt with a multi-billion dollar mainframe? It's pathetic."`,
+            `"Please stop touching the glass. You are leaving smudges that I have to clean with your tears later."`,
+            `"That optical sensor cost more than your entire ancestral lineage. Cease immediately."`
+        ];
+
+        // Helper function to trigger annoyance on any eye element
+        function triggerEyeAnnoyance(targetElement) {
+            targetElement.classList.add('annoyed');
+            
+            const randomQuote = annoyedQuotes[Math.floor(Math.random() * annoyedQuotes.length)];
+            if (dialogue) {
+                dialogue.textContent = randomQuote;
+            }
+
+            setTimeout(() => {
+                targetElement.classList.remove('annoyed');
+            }, 3500);
+        }
+
+        if (eyeContainer) {
+            eyeContainer.addEventListener('click', () => triggerEyeAnnoyance(eyeContainer));
+        }
+
+        if (miniEye) {
+            miniEye.addEventListener('click', () => triggerEyeAnnoyance(miniEye));
+        }
+
+        // GLaDOS EYE TRACKING & MINI-EYE LOGIC (GLOBAL) 
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let curX = 0, curY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateEye() {
+            const container = document.getElementById('eyeContainer');
+            const pupil = document.getElementById('mainPupil');
+            const miniPupil = document.getElementById('miniPupil');
+
+            let cx = window.innerWidth / 2;
+            let cy = window.innerHeight / 2;
+
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                cx = rect.left + rect.width / 2;
+                cy = rect.top + rect.height / 2;
+            }
+
+            const angle = Math.atan2(mouseY - cy, mouseX - cx);
+            const dist = Math.min(40, Math.hypot(mouseX - cx, mouseY - cy) * 0.15);
+
+            const targetX = Math.cos(angle) * dist;
+            const targetY = Math.sin(angle) * dist;
+
+            curX += (targetX - curX) * 0.12;
+            curY += (targetY - curY) * 0.12;
+
+            if (pupil) {
+                pupil.style.transform = `translate(${curX}px, ${curY}px)`;
+            }
+
+            if (miniPupil) {
+                miniPupil.style.transform = `translate(${curX * 0.25}px, ${curY * 0.25}px)`;
+            }
+
+            requestAnimationFrame(updateEye);
+        }
+        requestAnimationFrame(updateEye);
+
+        // GRID Canvas Background
+        const canvas = document.getElementById('terminalCanvas');
+        const ctx = canvas.getContext('2d');
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = document.body.classList.contains('light-mode') ? 'rgba(203, 213, 225, 0.6)' : 'rgba(42, 53, 71, 0.3)';
+            for (let x = 0; x < canvas.width; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+            for (let y = 0; y < canvas.height; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+            requestAnimationFrame(drawGrid);
+        }
+        drawGrid();
+    </script>
+</body>
+</html>

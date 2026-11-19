@@ -1,44 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area of a Triangle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends 'base.html' %}
 
-    <header class="triangle-header">
-        <h1>Area of a Triangle</h1>
-        <form action="/works/area/areaofatriangle", method="post">
-            <div>
-                <label for="base">Enter a value for the base:</label>
-                <input type="text" id="base" name="inputBase" required>
+{% block title %}Area of a Triangle // Aperture Science{% endblock %}
+
+{% block content %}
+<div class="aperture-module-card" id="triangle-section">
+    <div class="module-header">
+        <span class="module-title">[CALCULATION_MODULE // TRIANGLE_AREA]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <div class="module-body">
+        <h2>GEOMETRIC AREA PROTOCOL</h2>
+        <p class="module-desc">Input base and height sequences for server-side spatial computation.</p>
+
+        <form action="{{ url_for('areaofatriangle') }}#triangle-section" method="post" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="base">INPUT BASE SEQUENCE:</label>
+                <input type="text" id="base" name="inputBase" placeholder="Enter base..." required autocomplete="off">
             </div>
-            <div>
-                <label for="height">Enter a value for the height:
-                <input type="text" id="height" name="inputHeight" required>
+
+            <div class="input-wrapper" style="margin-top: 15px;">
+                <label for="height">INPUT HEIGHT SEQUENCE:</label>
+                <input type="text" id="height" name="inputHeight" placeholder="Enter height..." required autocomplete="off">
             </div>
-            <div>
-                <input type="submit" value="Calculate">
-            </div>
+
+            <button type="submit" class="aperture-btn" style="margin-top: 20px;">
+                <span>EXECUTE CALCULATION</span>
+            </button>
         </form>
 
         {% if result is not none %}
-        <p>The area of the triangle is: {{result}}</p>
+        <div class="result-terminal">
+            <span class="result-label">// SERVER-SIDE COMPUTATION RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
-    </header>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
