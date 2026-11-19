@@ -1,27 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-container">
+
+    <div class="aperture-eye-card profile-header-card">
+        
+        <!-- Top Status Tag -->
+        <div class="card-status-badge">
+            <span class="status-indicator"></span> SUBJECT SCAN: ACTIVE
+        </div>
+
+        <div class="eye-display-wrapper">
+            <div class="subject-ring">
+                <img src="{{ url_for('static', filename='images/subject_photo.jpg') }}" alt="Test Subject" class="subject-img">
+                <div class="dashed-orbit-ring"></div>
+            </div>
+        </div>
+
+        <div class="subject-info-block">
+            <div class="terminal-tag">[SUBJECT PERSONNEL DOSSIER]</div>
+            <h2>TEST SUBJECT: JEAN GABRIEL R. ALBALATE // LEVEL 2-1</h2>
+            <p class="subtitle">STATUS: AUTHORIZED PERSONNEL // COGNITIVE FUNCTIONS NOMINAL</p>
+        </div>
+
+    </div>
+
+    <div class="dossier-grid">
+        
+        <!-- Academic Experimentation Side Panel -->
+        <div class="aperture-eye-card profile-panel-side lab-card-orange">
+            <div class="lab-tag">APERTURE LABS #01</div>
+            <div class="lab-year">ACADEMIC PROTOCOLS</div>
+            <h3 class="panel-title">ACADEMIC EXPERIMENTATION</h3>
+            <p class="panel-desc">Enrolled as a <strong>Computer Engineering (CPE)</strong> student, focusing on computational logic and analytical hardware-software design.</p>
+            <ul class="aperture-list">
+                <li><span>Core Focus:</span> Data Structures, Algorithms & Logic</li>
+                <li><span>Math Foundations:</span> Discrete Math & Differential Equations</li>
+                <li><span>Lab Protocols:</span> Applied Physics & Circuit Analysis</li>
             </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
-    
-    <header class="profile-header">
-        <h1>My Profile</h1>
-    </header>
-</body>
-</html>
+        </div>
+
+        <div class="aperture-eye-card profile-panel-side lab-card-blue">
+            <div class="lab-tag blue-tag">APERTURE LABS #02</div>
+            <div class="lab-year blue-year">SYSTEM CAPABILITIES</div>
+            <h3 class="panel-title">TECHNICAL CAPABILITIES</h3>
+            <p class="panel-desc">Engineered for full-stack deployment under strict GLaDOS modular standards.</p>
+            <ul class="aperture-list">
+                <li><span>Stack:</span> Python, Flask, Jinja2, HTML5, CSS3, JS</li>
+                <li><span>Version Control:</span> Git & GitHub (Branch, Stage, Merge)</li>
+                <li><span>Environment:</span> VS Code, Localhost & Custom Layouts</li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

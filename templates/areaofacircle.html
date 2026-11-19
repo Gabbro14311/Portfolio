@@ -1,36 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area of a Circle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends 'base.html' %}
 
-    <header class="circle-header">
-        <h1> Area of a Circle</h1>
-        <form action="/works/area/areaofacircle" method="post">
-            <label for="radius">Enter a value:</label>
-            <input type="text" id="radius" name="inputRadius" required>
-            <input type="submit" value="Calculate">
+{% block title %}Area of a Circle // Aperture Science{% endblock %}
+
+{% block content %}
+
+<div class="aperture-module-card" id="circle-section">
+    <div class="module-header">
+        <span class="module-title">[CALCULATION_MODULE // CIRCLE_AREA]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <div class="module-body">
+        <h2>GEOMETRIC AREA PROTOCOL</h2>
+        <p class="module-desc">Input radius sequence for server-side spatial computation.</p>
+
+        <form action="{{ url_for('areaofacircle') }}#circle-section" method="post" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="radius">INPUT RADIUS SEQUENCE:</label>
+                <input type="text" id="radius" name="inputRadius" placeholder="Enter radius..." required autocomplete="off">
+            </div>
+
+            <button type="submit" class="aperture-btn">
+                <span>EXECUTE CALCULATION</span>
+            </button>
         </form>
 
         {% if result is not none %}
-        <p>The area of the circle is: {{result}}</p>
+        <div class="result-terminal">
+            <span class="result-label">// SERVER-SIDE COMPUTATION RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
-    </header>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

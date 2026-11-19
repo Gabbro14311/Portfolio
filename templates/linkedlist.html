@@ -1,63 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linked List</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends 'base.html' %}
 
-    <header class="linkedlist-header">
-        <h1>Linked List</h1>
-        <form action="/works/linkedlist" method="post">
-            <div>
-                <label for="data">Enter data:</label>
-                <input type="text" id="data" name="inputValue">
-                <input type="text" id="data" name="inputNode">
-            </div>
+{% block title %}Linked List // Aperture Science{% endblock %}
 
-            <div>
-                <label for="operation">Choose an action:</label>
-                <select id="operation" name="action">
-                    <option value="insert_at_beginning">Insert at Beginning</option>
-                    <option value="insert_at_end">Insert at End</option>
-                    <option value="insert_after">Insert After</option>
-                    <option value="remove_at_beginning">Remove at Beginning</option>
-                    <option value="remove_at_end">Remove at End</option>
-                    <option value="remove">Remove Value</option>
-                    <option value="search">Search</option>
+{% block content %}
+<!-- Add an ID to the card for the smooth scroll anchor -->
+<div class="aperture-module-card" id="linkedlist-section">
+    <!-- Header Bar -->
+    <div class="module-header">
+        <span class="module-title">[DATA_STRUCTURE // LINKED_LIST]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <!-- Body -->
+    <div class="module-body">
+        <h2>LINKED LIST PROTOCOL</h2>
+        <p class="module-desc">Manage dynamic node sequences via server-side routing.</p>
+
+        <!-- Use url_for pointing to your linked list route function name -->
+        <form action="{{ url_for('linkedlist') }}#linkedlist-section" method="post" class="aperture-form">
+            
+            <div class="input-wrapper mb-15">
+                <label for="operation">CHOOSE ACTION:</label>
+                <select id="operation" name="action" class="aperture-select">
+                    <option value="insert_at_beginning" {% if selected_action == 'insert_at_beginning' %}selected{% endif %}>Insert at Beginning</option>
+                    <option value="insert_at_end" {% if selected_action == 'insert_at_end' %}selected{% endif %}>Insert at End</option>
+                    <option value="insert_after" {% if selected_action == 'insert_after' %}selected{% endif %}>Insert After</option>
+                    <option value="remove_at_beginning" {% if selected_action == 'remove_at_beginning' %}selected{% endif %}>Remove at Beginning</option>
+                    <option value="remove_at_end" {% if selected_action == 'remove_at_end' %}selected{% endif %}>Remove at End</option>
+                    <option value="remove" {% if selected_action == 'remove' %}selected{% endif %}>Remove Value</option>
+                    <option value="search" {% if selected_action == 'search' %}selected{% endif %}>Search</option>
                 </select>
             </div>
 
-            <input type="submit" value="Execute">
+            <!-- Primary Input Field (Value) -->
+            <div class="input-wrapper mb-15" id="valueInputWrapper">
+                <label for="data" id="valueLabel">INPUT VALUE:</label>
+                <input type="text" id="data" name="inputValue" placeholder="Enter value..." autocomplete="off">
+            </div>
 
+            <!-- Secondary Input Field (Target Node for 'Insert After') -->
+            <div class="input-wrapper" id="nodeInputWrapper" style="display: none;">
+                <label for="targetNode">INSERT AFTER TARGET NODE:</label>
+                <input type="text" id="targetNode" name="inputNode" placeholder="Enter target node value..." autocomplete="off">
+            </div>
+
+            <button type="submit" class="aperture-btn mt-20">
+                <span>EXECUTE OPERATION</span>
+            </button>
         </form>
 
         {% if result %}
-        <p>{{result}}</p>
+        <div class="result-terminal mt-25">
+            <span class="result-label">// OPERATION RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
 
-        <h3>Current Linked List:</h3>
-        <ul>
-            {% for item in list_values %}
-                <li>{{item}}</li>
-            {% else %}
-                <li>The linked list is currently empty</li>
-            {% endfor %}
-        </ul>
-    </header>
-</body>
-</html>
+        <div class="result-terminal queue-state-container">
+            <span class="result-label queue-state-label">// CURRENT LINKED LIST:</span>
+            <ul class="aperture-list">
+                {% for item in list_values %}
+                    <li>{{ item }}</li>
+                {% else %}
+                    <li class="empty-notice">The linked list is currently empty...</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const operationSelect = document.getElementById('operation');
+    const valueInputWrapper = document.getElementById('valueInputWrapper');
+    const valueInput = document.getElementById('data');
+    const valueLabel = document.getElementById('valueLabel');
+    const nodeInputWrapper = document.getElementById('nodeInputWrapper');
+    const nodeInput = document.getElementById('targetNode');
+
+    function updateInputs() {
+        const action = operationSelect.value;
+
+        // Reset display states
+        valueInputWrapper.style.display = 'block';
+        nodeInputWrapper.style.display = 'none';
+        valueInput.required = true;
+        nodeInput.required = false;
+
+        if (action === 'remove_at_beginning' || action === 'remove_at_end') {
+            // Hide value input entirely for actions that don't need parameters
+            valueInputWrapper.style.display = 'none';
+            valueInput.required = false;
+            valueInput.value = '';
+        } else if (action === 'insert_after') {
+            // Show both inputs for 'Insert After'
+            nodeInputWrapper.style.display = 'block';
+            nodeInput.required = true;
+            valueLabel.textContent = 'VALUE TO INSERT:';
+        } else if (action === 'search') {
+            valueLabel.textContent = 'VALUE TO SEARCH:';
+        } else if (action === 'remove') {
+            valueLabel.textContent = 'VALUE TO REMOVE:';
+        } else {
+            valueLabel.textContent = 'INPUT VALUE:';
+        }
+    }
+
+    // Trigger on change
+    operationSelect.addEventListener('change', updateInputs);
+
+    // Run immediately on page load to respect Flask persistence
+    updateInputs();
+</script>
+{% endblock %}

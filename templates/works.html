@@ -1,36 +1,179 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title> Works </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body> 
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends "base.html" %}
 
-    <header class="works-header">
-        <nav>
-            <ul>
-                <li><a href="/works/touppercase">toUpperCase</a></li>
-                <li><a href="/works/area/areaofacircle">Area of a Circle</a></li>
-                <li><a href="/works/area/areaofatriangle">Area of a Triangle</a></li>
-                <li><a href="/works/linkedlist">Linked List</a></li>
-                <li><a href="/works/stack">Stack</a></li>
-                <li><a href="/works/stack/reversestrings">Reverse Strings</a></li>
-                <li><a href="/works/stack/infixtopostfix">Infix to Postfix</a></li>
-                <li><a href="/works/queuedequeue">Queue and Dequeue</a></li>
-            </ul>
-        </nav>
-    </header>
-</body>
-</html>
+{% block content %}
+<div class="works-container">
+
+    <div class="works-header-block">
+        <div class="terminal-tag">
+            <span class="status-indicator blink"></span>
+            // APERTURE TEST CHAMBER ARCHIVES
+        </div>
+        <h2 class="section-title">PROJECT BLUEPRINTS & WORKS</h2>
+    </div>
+
+    <div class="projects-grid">
+
+        <!-- 1. toUpperCase -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview amber-theme">
+                <span class="chamber-badge amber">CHAMBER 01</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">🔠</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">toUpperCase</h3>
+                <p class="blueprint-description">
+                    String transformation module executing case conversion protocols for raw input data sequences.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Flask</span>
+                    <a href="{{ url_for('touppercase') }}" class="btn-simulate amber">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Area of a Circle -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview blue-theme">
+                <span class="chamber-badge blue">CHAMBER 02</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">⭕</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Area of a Circle</h3>
+                <p class="blueprint-description">
+                    Mathematical computation subroutine calculating circular surface dimensions given radius parameters.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Flask</span>
+                    <a href="{{ url_for('areaofacircle') }}" class="btn-simulate blue">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Area of a Triangle -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview green-theme">
+                <span class="chamber-badge green">CHAMBER 03</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">📐</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Area of a Triangle</h3>
+                <p class="blueprint-description">
+                    Geometric evaluation algorithm determining surface area based on base and height dimensions.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Flask</span>
+                    <a href="{{ url_for('areaofatriangle') }}" class="btn-simulate green">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Linked List -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview amber-theme">
+                <span class="chamber-badge amber">CHAMBER 04</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">🔗</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Linked List</h3>
+                <p class="blueprint-description">
+                    Custom node-based data structure implementation supporting dynamic insertions, deletions, and traversal tracking.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Data Structures</span>
+                    <a href="{{ url_for('linkedlist') }}" class="btn-simulate amber">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Stack -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview blue-theme">
+                <span class="chamber-badge blue">CHAMBER 05</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">📚</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Stack</h3>
+                <p class="blueprint-description">
+                    LIFO (Last-In, First-Out) data structure execution model demonstrating push, pop, and peek operations.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Stack Logic</span>
+                    <a href="{{ url_for('stack') }}" class="btn-simulate blue">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Reverse Strings -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview green-theme">
+                <span class="chamber-badge green">CHAMBER 06</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">🔄</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Reverse Strings</h3>
+                <p class="blueprint-description">
+                    Algorithmic string manipulation tool reversing character order sequence arrays in real-time.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Algorithms</span>
+                    <a href="{{ url_for('reversestrings') }}" class="btn-simulate green">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Infix to Postfix -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview amber-theme">
+                <span class="chamber-badge amber">CHAMBER 07</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">⚙️</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Infix to Postfix</h3>
+                <p class="blueprint-description">
+                    Expression parser converting standard mathematical notation into reverse Polish notation using stack logic.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Parsing</span>
+                    <a href="{{ url_for('infixtopostfix') }}" class="btn-simulate amber">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Queue and Dequeue -->
+        <div class="aperture-blueprint-card">
+            <div class="blueprint-preview blue-theme">
+                <span class="chamber-badge blue">CHAMBER 08</span>
+                <div class="blueprint-icon">
+                    <span class="icon-symbol">🚶‍♂️</span>
+                </div>
+            </div>
+            <div class="blueprint-content">
+                <h3 class="blueprint-title">Queue and Dequeue</h3>
+                <p class="blueprint-description">
+                    FIFO (First-In, First-Out) and double-ended queue mechanisms managing element sequencing.
+                </p>
+                <div class="blueprint-footer">
+                    <span class="blueprint-tech">Python / Data Structures</span>
+                    <a href="{{ url_for('queuedequeue') }}" class="btn-simulate blue">SIMULATE ▶</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

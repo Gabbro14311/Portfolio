@@ -1,59 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stack</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends 'base.html' %}
 
-    <header class="stack-header">
-        <h1>Stack</h1>
-        <form action="/works/stack" method="post">
-            <div>
-                <label for="data">Enter data:</label>
-                <input type="text" id="data" name="inputValue">
-            </div>
+{% block title %}Stack // Aperture Science{% endblock %}
 
-            <div>
-                <label for="operation">Choose an action:</label>
-                <select id="operation" name="action">
-                    <option value="push">Push</option>
-                    <option value="pop">Pop</option>
-                    <option value="peek">Peek</option>
-                    <option value="is_empty">Is Empty</option>
+{% block content %}
+<div class="aperture-module-card" id="stack-section">
+    <div class="module-header">
+        <span class="module-title">[DATA_STRUCTURE // STACK_LIFO]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <!-- Body -->
+    <div class="module-body">
+        <h2>STACK PROTOCOL (LIFO)</h2>
+        <p class="module-desc">Manage Last-In-First-Out data stack sequences via server-side routing.</p>
+
+        <form action="{{ url_for('stack') }}#stack-section" method="post" class="aperture-form">
+            
+            <div class="input-wrapper mb-15">
+                <label for="operation">CHOOSE ACTION:</label>
+                <select id="operation" name="action" class="aperture-select">
+                    <option value="push" {% if selected_action == 'push' %}selected{% endif %}>Push</option>
+                    <option value="pop" {% if selected_action == 'pop' %}selected{% endif %}>Pop</option>
+                    <option value="peek" {% if selected_action == 'peek' %}selected{% endif %}>Peek</option>
+                    <option value="is_empty" {% if selected_action == 'is_empty' %}selected{% endif %}>Is Empty</option>
                 </select>
             </div>
 
-            <input type="submit" value="Execute">
+            <div class="input-wrapper" id="inputValueWrapper">
+                <label for="data">INPUT VALUE:</label>
+                <input type="text" id="data" name="inputValue" placeholder="Enter value to push..." autocomplete="off">
+            </div>
 
+            <button type="submit" class="aperture-btn mt-20">
+                <span>EXECUTE OPERATION</span>
+            </button>
         </form>
-        
+
         {% if result %}
-        <p>{{result}}</p>
+        <div class="result-terminal mt-25">
+            <span class="result-label">// OPERATION RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
 
-        <h3>Current Stack:</h3>
-        <ul>
-            {% for item in list_values %}
-                <li>{{item}}</li>
-            {% else %}
-                <l1>The stack is currently empty</l1>
-            {% endfor %}
-        </ul>
-    </header>
-</body>
-</html>
+        <!-- Current Stack State Display -->
+        <div class="result-terminal queue-state-container">
+            <span class="result-label queue-state-label">// CURRENT STACK STATE:</span>
+            <ul class="aperture-list">
+                {% for item in list_values %}
+                    <li>{{ item }}</li>
+                {% else %}
+                    <li class="empty-notice">The stack is currently empty...</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const operationSelect = document.getElementById('operation');
+    const inputWrapper = document.getElementById('inputValueWrapper');
+    const inputField = document.getElementById('data');
+
+    function toggleInputVisibility() {
+        if (operationSelect.value === 'push') {
+            inputWrapper.style.display = 'block';
+            inputField.required = true;
+        } else {
+            inputWrapper.style.display = 'none';
+            inputField.required = false;
+            inputField.value = ''; // Clear stale data so Flask isn't bothered
+        }
+    }
+
+    // Run on dropdown change
+    operationSelect.addEventListener('change', toggleInputVisibility);
+
+    // Run immediately on page load to respect Flask's selected_action right away
+    toggleInputVisibility();
+</script>
+{% endblock %}

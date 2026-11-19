@@ -1,36 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infix to Postfix</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% extends 'base.html' %}
 
-    <header class="ito-header">
-        <h1>Infix to Postfix</h1>
-        <form action="/works/stack/infixtopostfix" method="post">
-            <label for="equation">Enter an equation:</label>
-            <input type="text" id="equation" name="inputEquation" required>
-            <input type="submit" value="Convert">
+{% block title %}Infix to Postfix // Aperture Science{% endblock %}
+
+{% block content %}
+<!-- Add an ID to the card for the smooth scroll anchor -->
+<div class="aperture-module-card" id="infix-section">
+    <!-- Header Bar -->
+    <div class="module-header">
+        <span class="module-title">[STACK_PROCESSOR // INFIX_TO_POSTFIX]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <div class="module-body">
+        <h2>EXPRESSION CONVERSION PROTOCOL</h2>
+        <p class="module-desc">Input infix equation sequence for server-side stack translation.</p>
+
+        <form action="{{ url_for('infixtopostfix') }}#infix-section" method="post" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="equation">INPUT INFIX EQUATION:</label>
+                <input type="text" id="equation" name="inputEquation" placeholder="Enter equation (e.g., A+B*C)..." required autocomplete="off">
+            </div>
+
+            <button type="submit" class="aperture-btn" style="margin-top: 20px;">
+                <span>EXECUTE TRANSLATION</span>
+            </button>
         </form>
 
         {% if result is not none %}
-        <p>The Postfix for this given equation is: {{result}}</p>
+        <div class="result-terminal">
+            <span class="result-label">// SERVER-SIDE POSTFIX RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
-    </header>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

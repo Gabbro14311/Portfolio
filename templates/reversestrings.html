@@ -1,37 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse Strings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+{% extends 'base.html' %}
 
-</head>
-<body>
-    <header class="site-header">
-        <h1 class="site-title">Welcome to my Portfolio</h1>
-        <nav class="main-nav"> 
-            <ul> 
-                <li><a href="/">Home</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/works">Works</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
-        </nav>
-        <hr class="header-divider">
-    </header>
+{% block title %}Reverse Strings // Aperture Science{% endblock %}
 
-    <header class="rs-header">
-        <h1>Reverse Strings</h1>
-        <form action="/works/stack/reversestrings" method="post">
-            <label for="text">Enter a string:</label>
-            <input type="text" id="text" name="inputString" required>
-            <input type="submit" value="Convert">
+{% block content %}
+<!-- Add an ID to the card for the smooth scroll anchor -->
+<div class="aperture-module-card" id="reverse-section">
+    <div class="module-header">
+        <span class="module-title">[STACK_PROCESSOR // REVERSE_STRINGS]</span>
+        <span class="module-status">SYSTEM READY</span>
+    </div>
+
+    <!-- Body -->
+    <div class="module-body">
+        <h2>STRING REVERSAL PROTOCOL</h2>
+        <p class="module-desc">Input sequence for server-side stack inversion.</p>
+
+        <form action="{{ url_for('reversestrings') }}#reverse-section" method="post" class="aperture-form">
+            <div class="input-wrapper">
+                <label for="text">INPUT STRING SEQUENCE:</label>
+                <input type="text" id="text" name="inputString" placeholder="Enter string to reverse..." required autocomplete="off">
+            </div>
+
+            <button type="submit" class="aperture-btn" style="margin-top: 20px;">
+                <span>EXECUTE INVERSION</span>
+            </button>
         </form>
 
         {% if result is not none %}
-        <p>The string reversed is: {{result}}</p>
+        <div class="result-terminal">
+            <span class="result-label">// SERVER-SIDE INVERSION RESULT:</span>
+            <div class="result-value">{{ result }}</div>
+        </div>
         {% endif %}
-    </header>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
